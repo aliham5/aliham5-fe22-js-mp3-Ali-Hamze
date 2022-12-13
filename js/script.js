@@ -17,9 +17,11 @@ function extractData(item) {
 }
 
 async function searchByLanguage(text){
-    
+    event.preventDefault();
     const response = await fetch(rootUrl + "lang/" + text + "?fullText=false", {
         method: "GET"
+      
+        
     })
 
     
@@ -32,6 +34,7 @@ async function searchByLanguage(text){
 searchInputElement.addEventListener('change', event => {
     const value = event.target.value;
     searchText = value
+   
 })
 
 
