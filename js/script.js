@@ -1,94 +1,85 @@
-const rootUrl = "https://restcountries.com/v3.1/";
-const contentElement = document.getElementById("content");
-const searchInputElement = document.getElementById("search-input");
-const searchButtonElement = document.getElementById("search-button");
-let searchText = "";
-const clear = document.getElementById("search-input");
+function fetchLanguage(all) {
+    const url = `https://restcountries.com/v3.1/lang/${all}`
 
+    console.log(url);
 
-function extractData(item) {
-    return {
-        name: item.name.common,
-        subregion: item.subregion,
-        capital: item.capital,
-        population: item.population,
-        flag: item.flags.png,
-    }
+    fetch(url)
+        .then(
+            function (response) {
+                console.log(response.status);
+                return response.json();
+            }
+        )
+        .then(Info)
+        .catch(pError);
 }
 
-async function searchByLanguage(text){
+const btn = document.querySelector('#button');
+btn.addEventListener('click', searchLanguage);
+
+function searchLanguage(event) {
     event.preventDefault();
-    const response = await fetch(rootUrl + "lang/" + text + "?fullText=false", {
-        method: "GET"
-      
-        
-    })
 
-    
-    const data = await response.json()
+    const inputLanguage = document.querySelector('#language-input');
 
-    const mapedData = data.map(extractData)
-    return mapedData;
+    const language = inputLanguage.value;
+    inputLanguage.value = '';
+    console.log(language);
+
+    fetchLanguage(language);
+}
+function pError() {
+    const errorP = document.querySelector('#error-message');
+    errorP.innerText = 'inget hittad, sök igen!';
 }
 
-searchInputElement.addEventListener('change', event => {
-    const value = event.target.value;
-    searchText = value
+
+function Info(countrydata) {
+    console.log(countrydata);
+    document.querySelector('#content-container').innerHTML = '';
+
+    countrydata.sort((objA, objB) => objB.population - objA.population); 
+
    
-})
+
+  
+    for (let i = 0; i < countrydata.length; i++) {
+
+        
+
+        const countryName = document.createElement('h1');
+        document.querySelector('#content-container').appendChild(countryName);
+        countryName.src = countrydata[i].name.common;
+        countryName.innerText = "Name: " + (countrydata[i].name.common);
+
+        const countryCapital = document.createElement('h2');
+        document.querySelector('#content-container').appendChild(countryCapital);
+        countryCapital.src = countrydata[i].capital;
+        countryCapital.innerText = "Capital: " + (countrydata[i].capital);
+
+        const countrySubRegion = document.createElement('p');
+        document.querySelector('#content-container').appendChild(countrySubRegion);
+        countrySubRegion.src = countrydata[i].subregion;
+        countrySubRegion.innerText = "Sub region: " + (countrydata[i].subregion);
 
 
-function sortItems(itemA, itemB) {
-    if (itemA.population < itemB.population) {
-        return 1
+        const countryPopulation = document.createElement('h3');
+        document.querySelector('#content-container').appendChild(countryPopulation);
+        countryPopulation.src = countrydata[i].population;
+        countryPopulation.innerText = "Population: " + (countrydata[i].population);
+        
+
+        const countryFlag = document.createElement('img');
+        document.querySelector('#content-container').appendChild(countryFlag);
+        countryFlag.src = countrydata[i].flags.png;
+
+      
+        if(i === 0){     
+        }
+        else {};
     }
-    else if (itemA.population > itemB.population) {
-        return -1
-    }
-    else {
-        return 0
-    }
+
+
+    document.querySelector('#error-message').innerHTML = '';
+
 }
-
-function itemToHtmlStr(item) {
-    return `
-    <div class="item">
-        <p class="name">
-            <span class = "title">Name</span>: ${item.name}
-        </p>
-        <p class="subregion">
-            <span class = "title">Subregion</span>: ${item.subregion}
-        </p>
-        <p class="capital">
-        <span class = "title">Capital</span>: ${item.capital}
-        </p>
-        <p class="population">
-        <span class = "title">Population</span>: ${item.population}
-        </p>
-        <p class="flag">
-        <span class = "title">Flag:</span><img src="${item.flag}"> 
-        </p>
-    </div>
-    `
-}
-
-searchButtonElement.addEventListener("click", async () => {
-    try {
-        const data = await searchByLanguage(searchText)
-        contentElement.innerHTML = 
-        data
-        .sort(sortItems)
-        .map(itemToHtmlStr).join("")
-    }
-    catch {
-        contentElement.innerHTML = `
-            <div class="error">
-                No languages found
-            </div>
-        `
-    }
-})
-
-clear.addEventListener("click", ()=>{
-    clear.value = "";
-})
