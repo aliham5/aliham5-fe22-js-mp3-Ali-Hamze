@@ -1,0 +1,35 @@
+*{
+    background-color: #dc6128;
+}
+
+#input-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+#language-input {
+    color: #ffffff;
+    border: 1px solid;
+}
+
+#button-enter {
+    color: #ffffff;
+    border: 1px solid;
+
+}
+
+
+
+#error-message {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+#container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: rgb(255, 255, 255);
+
+}
